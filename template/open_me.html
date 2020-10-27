@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>__title__</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="./js/wordTreeData.js"></script>
+    <script src="./js/topNGrams.js"></script>
+    <script src="./js/wordTreeUtils.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart', 'controls', 'wordtree']});
+      google.charts.load('current', {packages:['wordtree']});
+
+      google.charts.setOnLoadCallback(loadData);
+
+      let data;
+
+      function loadData() {
+        data = new google.visualization.arrayToDataTable(
+              treeData,false
+            );
+        drawDashboard();
+      }
+
+      function drawDashboard() {
+
+        var rootWord = document.getElementsByName("Search")[0].value;
+        if (rootWord === "") {
+            rootWord = "i";
+            }
+
+        if (treeData[0].length > 1) {
+
+            var dashboard = new google.visualization.Dashboard(
+                document.getElementById('dashboard_div'));
+
+            var myFilters = new Array();
+            var filterStr = document.getElementById("filter_container").innerHTML;
+
+            for (let index = 0; index < data['If'].length; index++) {
+              if (index === 0){
+                continue;
+              }
+              else {
+                var filterId = 'filter_div_'+ String(index);
+                filterStr = filterStr + "<div class='wordTreeFilters' id='" + filterId + "'></div>";
+                myFilters.push(
+                new google.visualization.ControlWrapper({
+                  'controlType': 'CategoryFilter',
+                  'containerId': filterId,
+                  'options': {
+                    'filterColumnLabel': data['If'][index]['label'],
+                    'ui':{
+                        'realtimeTrigger': false,
+                          }   
+                        },
+                      })
+                    )
+              }
+            }
+            document.getElementById("filter_container").innerHTML = filterStr;
+            var treeType = document.getElementById("tree-select").value;
+            var chart = new google.visualization.ChartWrapper({
+                'chartType': 'WordTree',
+                'containerId': 'chart_div',
+                'options': {
+                    'wordtree':{
+                        'format': 'implicit',
+                        'type': treeType,
+                        'word': rootWord
+                    }
+                },
+                'view': {'columns' : [0]}
+            });
+            dashboard.bind(myFilters,chart);
+            dashboard.draw(data);
+        }
+        else {
+            var treeType = document.getElementById("tree-select").value;
+            var options = {
+              wordtree: {
+                format: 'implicit',
+                type: treeType,
+                word: rootWord
+              }
+            };
+            var chart = new google.visualization.WordTree(document.getElementById('chart_div'));
+            chart.draw(data, options);
+        }
+        document.getElementById("total_comments").innerHTML = "There are a total of <b>" + String(treeData.length) + "</b> text responses."
+        }
+      
+    </script>
+
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['table']});
+      google.charts.setOnLoadCallback(drawTable);
+      console.log('topNGrams')
+      console.log(topNGrams)
+      function drawTable() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Ngram');
+        data.addColumn('number', 'Count');
+        data.addRows(topNGrams);
+        var table = new google.visualization.Table(document.getElementById('table_div'));
+
+        table.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
+      }
+    </script>
+</head>
+
+  <body>
+    <div class="topnav">
+      <a class="active" href="#home">__title__</a>
+      <select id="tree-select" class="form-control" onchange="drawDashboard()">
+         <option selected value="suffix">Suffix Tree</option>
+        <option value="prefix">Prefix Tree</option>
+        <option value="double">Double Tree</option>
+      </select>
+
+    </div>
+
+<p id="SearchHelp"></p>
+
+<div id="dashboard_div">
+    <!--Divs that will hold each control and chart-->
+	<div>
+	<br>
+	<p>Hello this is called a word tree. It allows you to explore common phrases as they occur in the texts. Hover over a word to see its frequency and click on each word follow its path further.</p>
+	<p>Down at the bottom you'll see the top 3 words that show up. These are to help inspire you as you explore. Use the text form to change the root word. Only enter one word. </p>
+	<p>Please feel free to inform me if things are not working as expected.</p>
+	<br>
+  </div>
+    <div id="total_comments"></div>
+    <div id="filter_container" class="container" style="display: flex; flex-direction: row; justify-content: left;">
+      <div class="search-container-Frequency">
+        <input class='wordTreeFilters' id="Search" type="text" placeholder="Change Root Word (1 word)" name="Search" onchange="drawDashboard()">
+      </div>
+    </div>
+
+    <div  id='chart_div'></div>
+    <div class="container" style="display: flex; flex-direction: row; justify-content: left;">
+      
+      <div id="table_div"></div>
+      <div id="right_table"></div>
+    </div>
+    
+</div>
+
+  </body>
+</html>

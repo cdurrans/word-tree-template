@@ -1,7 +1,12 @@
-# word-tree-template
- Easily create word trees with your data
+## Easily create word trees with your data
 
-All you need is to clone my template and run the python code to create a beautiful word tree using google charts.
+[//]: # (Image References)
+
+Clone my template and run the python code to create a beautiful word tree using google charts like the one below.
+
+![image](https://user-images.githubusercontent.com/27505871/113432770-3991c300-939b-11eb-9b1b-e57ab418a085.png)
+
+If you'd like to see a brief explanation and example feel free to see here: [https://cdurrans.github.io/2020/10/22/Word-Trees.html](https://cdurrans.github.io/2020/10/22/Word-Trees.html)
 
 Use the following to create your word tree:
 
